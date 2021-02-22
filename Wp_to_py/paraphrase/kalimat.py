@@ -1,3 +1,0 @@
-from paraphraser import paraphrase
-# Generate list of sentences with similar contextual meaning
-sentences = paraphrase("PT Charoen Pokphand Indonesia Tbk is the largest producer in Indonesia in the field of animal feed, procurement of chicks and processed chicken meat. The company, which was founded in 1972, is the first largest mill in Jakarta to provide high quality animal feed. Today, this company has developed into a company that focuses on agribusiness that covers all aspects of chicken farming, from the production of quality animal feed, to the cultivation of disease-resistant livestock as well as the production of high quality poultry products. This company also dominates the production and supply of layer chickens and broilers in Indonesia.")

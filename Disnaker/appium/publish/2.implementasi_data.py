@@ -306,7 +306,8 @@ def urai(df,pengaktifan_AI,tipe_gambar,layer1,layer2,layer3,adobe_document):
                     if pengaktifan_AI == True:
                         layer3.visible = True
                         
-                        layer_sama("Keterangan", layer3, keteran[3] + "\n Informasi Lebih lanjut Kunjungi Foloker.com", 33, False)
+                        # layer_sama("Keterangan", layer3, keteran[3] + "-- Informasi Lebih lanjut Kunjungi Foloker.com", 33, False)
+                        layer_sama("Keterangan", layer3, "\n", 1, False)
                         # layer_sama("tgl", layer3, str(tgl), 22, False)
                         layer_sama("no", layer3, "0"+str(no), 147, False)
                         save_pic(index,row["Nama"],str(no_d),adobe_document)
@@ -343,7 +344,8 @@ def urai(df,pengaktifan_AI,tipe_gambar,layer1,layer2,layer3,adobe_document):
 
 
 def maine(tgl,tipe_gambar):
-    df = pd.read_csv("hasil\%s\data_namapekerjaan1.csv"%tgl)
+    path_data = "E:/Belajar/www.disnakerja.com/hasil/"
+    df = pd.read_csv(path_data+"%s\data_namapekerjaan1.csv"%tgl)
     print (df.columns)
 
     adobe_app = win32.GetActiveObject("Illustrator.Application")
@@ -373,10 +375,10 @@ def maine(tgl,tipe_gambar):
     if tipe_gambar == "story":
         pass
     else:
-        DF_fix.to_csv('hasil\%s\data_Fix.csv'%tgl)
+        DF_fix.to_csv(path_data+'%s\data_Fix.csv'%tgl)
 
 def baca_file():
-    tgl_r = open("E:/Belajar/www.disnakerja.com/Data/tanggal.txt", "r")
+    tgl_r = open("E:/Belajar/www.disnakerja.com/Data/tanggal.txt", "r", encoding='utf-8-sig')
     tgl = tgl_r.read()
     tgl_r.close()
     return tgl

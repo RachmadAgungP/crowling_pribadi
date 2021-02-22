@@ -103,16 +103,16 @@ def feed(i,r,nama_foto,nama_perusahaan,device,driver,banyak_foto,info):
     print("-->> Caption Click.. ")
     captions = open_IG.find_element_by_id('com.instagram.android:id/caption_text_view')
     print("-->> Caption Write.. ")
-    captions.send_keys(str(info[i])+" \n \n #lowongankerja #lowongan #loker #lokerja #lowonganbumn #lowongancpns #lowonganpekerjaan #kerja #lokerjawatimur #lokersumatra #lokerjawa #lokermadura #lokerbali #lokerkalimantan #lokersulawesi #lokermaluku #lokerpapua #Karir #jobstreet #disnaker #jobs #klob #lokersurabaya #lokerjakarta #lokerjogja")
+    captions.send_keys("Untuk Informasi lebih lanjut buka website foloker.com atau link di bio"+" \n \n #lowongankerja #lowongan #loker #lokerja #lowonganbumn #lowongancpns #lowonganpekerjaan #kerja #lokerjawatimur #lokersumatra #lokerjawa #lokermadura #lokerbali #lokerkalimantan #lokersulawesi #lokermaluku #lokerpapua #Karir #jobstreet #disnaker #jobs #klob #lokersurabaya #lokerjakarta #lokerjogja")
     time.sleep(5)
     print("-->> Next... ")
     open_IG.find_element_by_id('com.instagram.android:id/next_button_imageview').click()
     print("-->> Close App IG ... ")
     open_IG.close_app()
     print("-->> Hapus File ... ")
-    time.sleep(5)
-    proses_file(i,str(i)+". "+nama_perusahaan[i],"hapus",nama_foto,device)
     time.sleep(2)
+    proses_file(i,str(i)+". "+nama_perusahaan[i],"hapus",nama_foto,device)
+    time.sleep(5)
 
 def ad_story(v,pilihan_menu,device):
     nama_file_from_pc = "E:\Belajar\www.disnakerja.com\hasil\%s\%s\%s.jpg"%(tgl,"story",v)
@@ -196,17 +196,14 @@ def mainee(tgl,uppy,tipe_upload):
     else:
         story(upp,device,driver)
 
-# now = datetime.datetime.now()
-# tgl = str(now.strftime("%B %d, %Y"))
 
-def baca_file():
-    tgl_r = open("E:/Belajar/www.disnakerja.com/Data/tanggal.txt", "r")
-    tgl = tgl_r.read()
-    tgl_r.close()
-    return tgl
+import _tgl_
 
-tgl = baca_file()
-
-upp = [1,2,3,4,5]
-tipe_upload = "story"
+tgl = _tgl_.baca_file()
+upp = _tgl_.data_proses(tgl)
+print (upp)
+tipe_upload = "feed"
+data_loker = pd.read_csv("hasil\%s\data_fix.csv"%tgl)
+for t in upp:
+    print (data_loker["nama_nomer"][t],"-> ",t)
 mainee(tgl,upp,tipe_upload)

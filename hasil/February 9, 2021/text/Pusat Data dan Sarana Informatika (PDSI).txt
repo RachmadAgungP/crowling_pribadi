@@ -1,0 +1,15 @@
+﻿Lowongan kerja Pusat Data dan Sarana Informatika (PDSI)
+  Junior Software Developer
+    Kualifikasi umum :
+    - Bachelor Degree of IT related fields
+    Kompetensi :
+    - Familiarity with PHP 7
+    - Great Passion for Clean and SOLID Code
+    - Laravel 5+
+    - Database: PostgreSQL
+    Deskripsi Pekerjaan :
+    - Analyze Requirements for implementing new web application features
+    - Implementing and maintaining existing web applications
+    - Implementing and maintaining API services
+    - ...
+-> Informasi lebih lanjut di http://foloker.com/2021/02/09/lowongan-kerja-Pusat-Data-dan-Sarana-Informatika-(PDSI)/

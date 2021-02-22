@@ -10,9 +10,9 @@ def remove_values_from_list(the_list, val):
 
 def artikel(posisi,parafrase1,parafrase2,parafrase3):
     def _potong(ele):
-        driver = webdriver.Chrome('chromedriver.exe')
-        driver.get('https://aiarticlespinner.co/paraphrasing-tool')
-
+        # driver = webdriver.Chrome('chromedriver.exe')
+        # driver.get('https://aiarticlespinner.co/paraphrasing-tool')
+        translations_id_list = []
         translator = google_translator()
         deteksi = translator.detect(ele)
         print (deteksi)
@@ -26,24 +26,25 @@ def artikel(posisi,parafrase1,parafrase2,parafrase3):
             translations_en_list.append(translations_en)
             print (translations_en_list)
             time.sleep(5)
-            driver.find_element_by_xpath('/html/body/div[1]/section[1]/div/div[3]/div[1]/div[3]/ul/li[4]/input').click()
+            # driver.find_element_by_xpath('/html/body/div[1]/section[1]/div/div[3]/div[1]/div[3]/ul/li[4]/input').click()
             time.sleep(2)
             kalimat = []
             for uo in translations_en_list:
-                inputs = driver.find_element_by_xpath('/html/body/div[1]/section[1]/div/div[3]/div[1]/div[2]/textarea')
-                inputs.send_keys(uo)
-                time.sleep(2)
-                driver.find_element_by_xpath('/html/body/div[1]/section[1]/div/div[3]/div[3]/div/button').click()
-                time.sleep(30)
-                kalimatnya = driver.find_element_by_xpath('/html/body/div[1]/section[1]/div/div[3]/div[1]/div[5]/div[1]').text
-                kalimat.append(kalimatnya)
-                driver.find_element_by_xpath('/html/body/div[1]/section[1]/div/div[3]/div[1]/div[2]/textarea').clear()
-            translations_id_list = []
+                # inputs = driver.find_element_by_xpath('/html/body/div[1]/section[1]/div/div[3]/div[1]/div[2]/textarea')
+                # inputs.send_keys(uo)
+                # time.sleep(2)
+                # driver.find_element_by_xpath('/html/body/div[1]/section[1]/div/div[3]/div[3]/div/button').click()
+                # time.sleep(30)
+                # kalimatnya = driver.find_element_by_xpath('/html/body/div[1]/section[1]/div/div[3]/div[1]/div[5]/div[1]').text
+                # kalimat.append(kalimatnya) # <---- old 
+                # driver.find_element_by_xpath('/html/body/div[1]/section[1]/div/div[3]/div[1]/div[2]/textarea').clear()
+                kalimat.append(uo) # <---- update 
+            
             for you in kalimat:
                 translations_id = translator.translate(you,lang_src='en',lang_tgt='id')
                 translations_id_list.append(translations_id)
             print (translations_id_list)
-            '[``, `Production Operator`,` Job description`, [`Check the machine check sheet before starting work`,` CNC machine operation / lathe / machining`], `Qualification`, [` Understanding the processing process`, ` CNC `,` shelf`, `production process`,` kanban`, `pendidikan minimal D3 jurusan permesinan mobil / 1 tahun pengalaman profesional`],` terms`, (`akta kelahiran`,` CV (Curriculum Vitae) ` , `FC E-KTP Karawang`,` FC Ijazah / SKHUN`, `FC Pakelaring CNC (Pemesinan)`, `Foto 4 × 6`,` Salinan KIR Dokter`, `Kartu Keluarga`,` SIM A / C`, `SKCK`,` Surat Keterangan Kehamilan AS (Khusus Wanita) `,` Surat Keterangan Belum Menikah di Kota`, `Rapor (Nilai PBB)`]] '
+        
         return (translations_id_list[0].split(';'))
 
     tag_atas = []
@@ -134,43 +135,66 @@ def artikel(posisi,parafrase1,parafrase2,parafrase3):
     print (tags_html)
     return (tags_html)
 
-def pendahuluan(text_final):
-    def _potong(ele):
-        driver = webdriver.Chrome('chromedriver.exe')
-        driver.get('https://aiarticlespinner.co/paraphrasing-tool')
+def parafrase_web(texts_list):
+    driver = webdriver.Chrome('chromedriver.exe')
+    driver.get('https://aiarticlespinner.co/paraphrasing-tool')
+    time.sleep(5)
+    driver.find_element_by_xpath('/html/body/div[1]/section[1]/div/div[3]/div[1]/div[3]/ul/li[4]/input').click()
+    time.sleep(2)
+    kalimat = []
+    for uo in texts_list:
+        inputs = driver.find_element_by_xpath('/html/body/div[1]/section[1]/div/div[3]/div[1]/div[2]/textarea')
+        inputs.send_keys(uo)
+        time.sleep(2)
+        driver.find_element_by_xpath('/html/body/div[1]/section[1]/div/div[3]/div[3]/div/button').click()
+        time.sleep(30)
+        kalimatnya = driver.find_element_by_xpath('/html/body/div[1]/section[1]/div/div[3]/div[1]/div[5]/div[1]').text
+        kalimat.append(kalimatnya) # <----- old
+        driver.find_element_by_xpath('/html/body/div[1]/section[1]/div/div[3]/div[1]/div[2]/textarea').clear()
+    return (kalimat)
 
+def pendahuluan(text_final,on_off_parafrase):
+    def _potong(ele):
         translator = google_translator()
         deteksi = translator.detect(ele)
-        print (deteksi)
+        translations_id_list = []
+        translations_en_list = []
+        akhir = []
+        # print (deteksi)
         if deteksi[0] == 'en':
+            # print (translations_id_list+"0")
+            translations_en = translator.translate(ele,lang_src='en',lang_tgt='en')
+            translations_en_list.append(translations_en)
+            kalimat = translations_en_list
+            translations_id_list = kalimat
+            akhir = translations_id_list
             pass
         else:
-            print (ele)
+            # print (ele)
             ro = 0
-            translations_en_list = []
             translations_en = translator.translate(ele,lang_src='id',lang_tgt='en')
             translations_en_list.append(translations_en)
-            print (translations_en_list)
-            time.sleep(5)
-            driver.find_element_by_xpath('/html/body/div[1]/section[1]/div/div[3]/div[1]/div[3]/ul/li[4]/input').click()
-            time.sleep(2)
-            kalimat = []
-            for uo in translations_en_list:
-                inputs = driver.find_element_by_xpath('/html/body/div[1]/section[1]/div/div[3]/div[1]/div[2]/textarea')
-                inputs.send_keys(uo)
-                time.sleep(2)
-                driver.find_element_by_xpath('/html/body/div[1]/section[1]/div/div[3]/div[3]/div/button').click()
-                time.sleep(30)
-                kalimatnya = driver.find_element_by_xpath('/html/body/div[1]/section[1]/div/div[3]/div[1]/div[5]/div[1]').text
-                kalimat.append(kalimatnya)
-                driver.find_element_by_xpath('/html/body/div[1]/section[1]/div/div[3]/div[1]/div[2]/textarea').clear()
-            translations_id_list = []
-            for you in kalimat:
-                translations_id = translator.translate(you,lang_src='en',lang_tgt='id')
-                translations_id_list.append(translations_id)
-            print (translations_id_list)
-            '[``, `Production Operator`,` Job description`, [`Check the machine check sheet before starting work`,` CNC machine operation / lathe / machining`], `Qualification`, [` Understanding the processing process`, ` CNC `,` shelf`, `production process`,` kanban`, `pendidikan minimal D3 jurusan permesinan mobil / 1 tahun pengalaman profesional`],` terms`, (`akta kelahiran`,` CV (Curriculum Vitae) ` , `FC E-KTP Karawang`,` FC Ijazah / SKHUN`, `FC Pakelaring CNC (Pemesinan)`, `Foto 4 × 6`,` Salinan KIR Dokter`, `Kartu Keluarga`,` SIM A / C`, `SKCK`,` Surat Keterangan Kehamilan AS (Khusus Wanita) `,` Surat Keterangan Belum Menikah di Kota`, `Rapor (Nilai PBB)`]] '
-        return (translations_id_list[0].split(';'))
+            # print (translations_en_list)
+            if on_off_parafrase == True:
+                kalimat = parafrase_web(translations_en_list)
+                # translations_id_list = []
+                for you in kalimat:
+                    translations_id = translator.translate(you,lang_src='en',lang_tgt='id')
+                    translations_id_list.append(translations_id)
+                akhir = translations_id_list[0].split(';')
+                # print (translations_id_list+"1")
+            else:
+                kalimat = translations_en_list
+                translations_id_list = kalimat
+                akhir = translations_id_list
+                # print (translations_id_list+"0")
+            
+            # for you in kalimat:
+            #     translations_id = translator.translate(you,lang_src='en',lang_tgt='id')
+            #     translations_id_list.append(translations_id)
+
+            # print (translations_id_list)
+        return (akhir)
 
     # batas_h1= [0]
     # print("h1",batas_h1)
@@ -181,6 +205,7 @@ def pendahuluan(text_final):
     # text_final = '; '.join([str(elem) for elem in tengah_text_final])
     # print (tengah_text_final)
 # ============ text_final
+
     olah = _potong(text_final)
 
     text_final_olah  = " "
@@ -188,6 +213,3 @@ def pendahuluan(text_final):
         text_final_olah += "<p style='text-align: justify;'>"+olah[x]+"</p>"
 
     return (text_final_olah)
-
-
-# header = dataw["header"][index]

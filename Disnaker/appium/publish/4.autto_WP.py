@@ -11,15 +11,13 @@ import unidecode
 import random
 import _WP_Seleksi_category
 import _WP_Posting
-# import _buat_content
+import _buat_content
 
 def maine(tgl,uppy):
     data_loker = pd.read_csv("E:\Belajar\www.disnakerja.com\hasil\%s\data_namapekerjaan1.csv"%tgl)
     # datetime.now().isoformat(timespec='minutes')   
     nama_perusahaan = data_loker['Nama']
-    # for ind in uppy:
-    #     _buat_content.htmll(tgl,ind,data_loker)
-
+    Path_Gambar = data_loker["Path_Gambar"]
     # datai = uppy
     datai = random.sample(uppy,len(uppy))
     print(datai)
@@ -43,7 +41,7 @@ def maine(tgl,uppy):
     website = 'https://foloker.com/'
     url = "%s/wp-json/wp/v2/"%website
     user = "admin"
-    password = "NDkd g1ZD bIVo ylzE qL6v hyHl"
+    password = ""
     credentials = user + ':' + password
     token = base64.b64encode(credentials.encode()) 
     headers = {'Authorization': 'Basic ' + token.decode('utf-8')}
@@ -59,8 +57,8 @@ def maine(tgl,uppy):
     import time
     from selenium.webdriver.common.keys import Keys
 
-    USERNAME = 'admin'
-    PASSWORD = 'AGUNG19541'
+    USERNAME = ''
+    PASSWORD = ''
 
     driver = webdriver.Chrome('chromedriver.exe')
     driver.get('https://foloker.com/wp-admin')
@@ -80,30 +78,43 @@ def maine(tgl,uppy):
         title = nama_perusahaan[index]
         title_img = title.translate(str.maketrans("","",string.punctuation)).replace("  "," ").replace(" ","-")
         # print ("judul Img ",title_img)
-        with open('hasil\%s\html\%s.html'%(tgl,nama_perusahaan[index]), 'r') as f:
+        with open('hasil\%s\html\%s.html'%(tgl,nama_perusahaan[index]), 'r', encoding='utf-8-sig') as f:
             html_string = f.read()
         artikela = html_string
         # artikela = artikel[index] 
-
-        nama_image = '%s.jpg'%title
+        
+        nama_image = Path_Gambar[index].split("/")[-1]
         id_image = _WP_Posting.search_img(title,nama_image,url,jss,headers)
         # print ("id_image ", id_image)
         Category = _WP_Seleksi_category.text_categorys(index,tgl,category_jurusan,category_lulusan,category_lokasi,nama_perusahaan)
-        id_category = _WP_Seleksi_category.id_categorys(Category)
+        id_category = _WP_Seleksi_category.id_categorys(Category)[0]
+        id_tags = _WP_Seleksi_category.id_categorys(Category)[1]
         # print ("----> ", cat(Category))
         # 2020-12-05
-        idpost = _WP_Posting.post_artikel(url,user,password,"Lowongan Kerja "+title,artikela,token,id_image,id_category,tgll,index,headers)
+        idpost = _WP_Posting.post_artikel(url,user,password,"Lowongan Kerja "+title,artikela,token,id_image,id_category,tgll,index,headers,id_tags)
         id_post = json.loads(idpost.content)['id']
+        
+        list_name_tag = ["Aceh","Sumatera Utara","Sumatera Barat","Riau","Jambi","Bengkulu","Sumatera Selatan","Kepulauan Bangka Belitung","Lampung","Banten","Jawa Barat","Jakarta","Jabodetabek","Jawa Tengah","Yogyakarta","Jawa Timur","Bali","Nusa Tenggara Barat",
+"Nusa Tenggara Timur","Kalimantan Utara","Kalimantan Barat","Kalimantan Tengah","Kalimantan Selatan","Kalimantan Timur","Gorontalo","Sulawesi Utara","Sulawesi Barat","Sulawesi Tengah","Sulawesi Selatan","Sulawesi Tenggara",
+"Maluku Utara","Maluku","Papua","Papua Barat", "Kepulauan Riau"]
+        list_index_tag = [90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124]
 
+        lokasii = ''
+        if len(id_tags) == 0:
+            lokasii += "Seluruh Indonesia"
+        else:
+            for lokasi in id_tags:
+                ind = list_index_tag.index(lokasi)
+                lokasii += str(list_name_tag[ind]) + ", " 
         # proses SEO
         ar = artikela
         soup = BeautifulSoup(ar, 'html.parser')
         objek = soup.find('p').get_text()
         deskrip = objek.split('.')
-        if len(deskrip[0]) <= 2:
-            deskripsi = deskrip[:5]
+        if len(deskrip[0]) <= 3:
+            deskripsi = str(deskrip[:5]) + "-- Lowongan Kerja "+ lokasii
         else:
-            deskripsi = deskrip[0]
+            deskripsi = str(deskrip[0]) + "-- Lowongan Kerja "+ lokasii
 
         driver.find_element_by_tag_name('body').send_keys(Keys.CONTROL + 't') 
         time.sleep(2)
@@ -123,17 +134,19 @@ def maine(tgl,uppy):
     closing = driver.find_element_by_xpath('/html/body')
     return closing
 
-def baca_file():
-    tgl_r = open("E:/Belajar/www.disnakerja.com/Data/tanggal.txt", "r")
-    tgl = tgl_r.read()
-    tgl_r.close()
-    return tgl
-
-tgl = baca_file()
+import _tgl_
+tgl = _tgl_.baca_file()
 # tgl = "January 6, 2021"
-datai = [0,2,3,4,5,6,7,8,9,10,11,12,14]
-# for y in list_data:
-#     htmll(tgl,y,dataw)
+# PARAFRASEs = True
+PARAFRASEs = False
+datai = _tgl_.data_proses(tgl)
+print (datai)
+
+# buat content WP
+data_loker = pd.read_csv("E:\Belajar\www.disnakerja.com\hasil\%s\data_namapekerjaan1.csv"%tgl)
+for ind in datai:
+    _buat_content.htmll(tgl,ind,data_loker,PARAFRASEs,True)[0]
+
 wess = maine(tgl,datai)
 wess.click()
 

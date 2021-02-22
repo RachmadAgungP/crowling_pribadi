@@ -10,6 +10,9 @@ import os
 import time
 import sys
 import _parafrase
+def decode(cfemail):
+    enc = bytes.fromhex(cfemail)
+    return bytes([c ^ enc[0] for c in enc[1:]]).decode('utf8')
 def grouping(sequence):
     sequence = sequence
     datas = []
@@ -56,7 +59,7 @@ def remove_values_from_list(the_list, val):
 def my_filter(tag):
     return (tag.name == 'li' and
         tag.parent.parent.name == 'li')
-def prasyaratan(posisi):
+def prasyaratan(posisi,link_disnaker):
     artikels_pendahuluan = ''
     bol = True
     batas_posisi= [i for i,li in enumerate(posisi.find_all(True)) if li.name == 'h5' or (li.name == 'p' and li.text in datas)]
@@ -70,14 +73,15 @@ def prasyaratan(posisi):
                 bol = False
             else:
                 bol = True
+    P_code_fix = []
+    Deskripsi_fix = []
     if bol == True:
         
         # Posisi
         Posisi = [li.text for li in posisi.find_all(True) if li.name == 'h5' ]
         
         # Kode
-        P_code_fix = []
-        Deskripsi_fix = []
+        
         for i in range(len(batas_posisi)):
             if i == len(batas_posisi)-1:
                 batass = posisi.find_all(True,recursive=True)[batas_posisi[-1]:batas_akhir[-1]]
@@ -91,7 +95,7 @@ def prasyaratan(posisi):
                 print (batas_posisi[i],"-->",batas_posisi[i+1])
                 
             P_code = [li.text for li in batass if li.name == 'p' and len(str(li.text)) <= 30]
-            Deskripsi = [li.text.split('\n') for li in batass if (li.name == 'ul' or li.name == 'ol') or li.previous_sibling.name == "p"]
+            Deskripsi = [li.text.split('\n') for li in batass if (li.name == 'ul' or li.name == 'ol') ]
             tag_deskip = [li.text.split('\n') for li in batassli if (li.name == 'ul' or li.name == 'ol')]
             P_code_fix.append(P_code)
             # print (P_code_fix)
@@ -108,14 +112,25 @@ def prasyaratan(posisi):
         # Keterangan 
         tag_a_link = []
         for tag1 in posisi.find_all(True)[batas_akhir[-1]:]:
+            # if '/cdn-cgi/l/email-protection' in tag1.get_text():
             if tag1.name != 'div' or tag1.name != 'ins' or tag1.name != 'script':
-                tag_a_link.append(tag1.get_text().replace("\n",", "))
+                tag1.get_text().replace('/cdn-cgi/l/email-protection',"")
+                if '[email\xa0protected]' in tag1.get_text():
+                    aw = tag1.get_text().replace('[email\xa0protected]',"")
+                    emails = posisi.find_all('a',{"class":"__cf_email__"})
+                    for y in emails:
+                        hashed_email = str(y).split(" ")[2].split('"')[1]
+                        tag_a_link.append(decode(hashed_email))
+                else:
+                    aw = tag1.get_text()
+                tag_a_link.append(aw.replace("\n",", "))
                 for i in tag1.findAll('a'):
                     tty = str(i.get("href"))
                     if "disnakerja.com" in tty:
                         pass
                     else:
                         tag_a_link.append(tty)
+                        # tag_a_link.append(link_disnaker)
             else:
                 pass
         Ket = remove_values_from_list(tag_a_link,'')
@@ -152,7 +167,10 @@ def prasyaratan(posisi):
     for oi in po:
         if len(oi) != len(P_code_fix[wew]):
             print ("yes")
-            P_code_fix[wew].pop(-1)
+            if len(P_code_fix[wew])<2:
+                pass
+            else:
+                P_code_fix[wew].pop(-1)
         else:
             continue
         wew += 1
@@ -166,15 +184,15 @@ def prasyaratan(posisi):
 # # F URL1 = "https://www.disnakerja.com/job/lowongan-kerja-pt-putra-perkasa-abadi-ppa-2/"
 # # F URL1 = "https://www.disnakerja.com/job/lowongan-kerja-pt-yamaha-music-manufacturing-asia/"
 # # N URL1 = "https://www.disnakerja.com/job/lowongan-kerja-pt-paiton-operation-maintenance-indonesia/"
-# # F URL1 = "https://www.disnakerja.com/job/lowogan-kerja-pt-dharma-satya-nusantara-tbk-dsn-group/"
-# # F URL1 = "https://www.disnakerja.com/job/lowongan-kerja-pt-djabesmen-dbc-co/"
+# URL1 = "https://www.disnakerja.com/job/lowongan-kerja-pt-gondowangi-tradisional-kosmetika/"
+# URL1 = "https://www.disnakerja.com/job/lowongan-kerja-pt-darma-henwa-tbk/"
 # print ("URL 2 ->",URL1)
 # time.sleep(1)
 # content1 = requests.get(URL1)
 # time.sleep(4)
 # soup1 = BeautifulSoup(content1.text, 'html.parser')
 # posisi = soup1.find('div',{"class":"entry-content"})
-# data = prasyaratan(posisi)
+# data = prasyaratan(posisi,"Disnaker.com")
 # print ("posisi =", data[0])
 # print ("posisi =", len(data[0]))
 # print ("code =", data[1])
